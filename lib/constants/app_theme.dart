@@ -6,6 +6,6 @@ abstract class MyTheme {
   static final theme = ThemeData(
     colorScheme: ColorScheme.fromSeed(seedColor: AppColor.primaryColor),
     useMaterial3: true,
-    scaffoldBackgroundColor: AppColor.whiteColor,
+    scaffoldBackgroundColor: AppColor.backgroundColo,
   );
 }

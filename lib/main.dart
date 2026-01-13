@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo/constants/app_theme.dart';
+import 'package:todo/screens/todo_screen/todo_screen.dart';
 
 
 void main() {
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Todo',
       theme: MyTheme.theme,
-      home: null
+      debugShowCheckedModeBanner: false,
+      home: TodoScreen()
     );
   }
 }

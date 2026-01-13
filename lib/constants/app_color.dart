@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColor {
   // Base color
-  static const Color primaryColor = Color(0xFFA42FC1); // Rich Purple// Light Purple
+  static const Color primaryColor = Color(0xFFA42FC1);
+  static const Color backgroundColo = Color(0xffffe6a7);
   static const Color lightPrimary = Color(0xFFDB83E6); // Very Light Purple
   static const Color secondaryColor = Color(0xFF00b4d8); // Darker Purple
   static const Color offWhite = Color(0xFFF4F6F8); // Soft Grey Background
