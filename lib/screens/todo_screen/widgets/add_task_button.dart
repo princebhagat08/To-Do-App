@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo/routes/app_routes.dart';
 
 import '../../../constants/txt_style.dart';
 import '../../../controllers/task_controller.dart';
@@ -24,15 +25,7 @@ class AddTaskButton extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            controller.addTask(
-              Task(
-                id: DateTime.now().millisecondsSinceEpoch,
-                title: "New Task",
-                description: "Task description",
-                priority: TaskPriority.medium,
-                dueDate: controller.selectedDate.value,
-              ),
-            );
+            Get.toNamed(AppRoutes.addTask);
           },
           child:  Text(
               "+ Add Task",

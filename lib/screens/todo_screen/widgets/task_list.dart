@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:todo/constants/txt_style.dart';
 import 'package:todo/controllers/task_controller.dart';
 
 import '../../../models/task.dart';
@@ -13,8 +15,8 @@ class TaskList extends StatelessWidget {
     return Expanded(
       child: Obx(() {
         if (controller.filteredTasks.isEmpty) {
-          return const Center(
-            child: Text("No tasks for today"),
+          return  Center(
+            child: Text("No tasks for today",style: mediumText,),
           );
         }
 
@@ -39,32 +41,69 @@ class TaskList extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            task.title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        task.title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _priorityChip(task.priority),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  task.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            task.description,
-            style: TextStyle(color: Colors.grey.shade600),
+
+          const SizedBox(width: 12),
+
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                DateFormat("hh:mm").format(task.dueDate),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          _priorityChip(task.priority),
         ],
       ),
     );
   }
 
 
+
   Widget _priorityChip(TaskPriority priority) {
-    Color color;
-    String text;
+    late Color color;
+    late String text;
 
     switch (priority) {
       case TaskPriority.low:
@@ -81,12 +120,23 @@ class TaskList extends StatelessWidget {
         break;
     }
 
-    return Chip(
-      label: Text(text),
-      backgroundColor: color.withOpacity(0.15),
-      labelStyle: TextStyle(color: color),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
     );
   }
+
 
 
 }
