@@ -2,15 +2,16 @@ import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin _notifications =
-  FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
 
   static Future<void> init() async {
     print("Notification init called");
+    tz.initializeTimeZones();
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const settings = InitializationSettings(
@@ -52,17 +53,16 @@ class NotificationService {
   }
 
   static Future<void> testScheduledNotification() async {
-    final now = DateTime.now();
-    final scheduled = now.add(const Duration(seconds: 10));
+    final scheduledTime =
+    tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10));
 
-    print("NOW: $now");
-    print("SCHEDULED: $scheduled");
+    print("SCHEDULED TZ TIME: $scheduledTime");
 
     await _notifications.zonedSchedule(
       1111,
       "Scheduled Test",
       "If you see this, scheduling WORKS",
-      tz.TZDateTime.from(scheduled, tz.local),
+      scheduledTime,
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'test_schedule_channel',
@@ -72,13 +72,14 @@ class NotificationService {
         ),
       ),
       androidAllowWhileIdle: true,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
       UILocalNotificationDateInterpretation.absoluteTime,
     );
 
-    print("Scheduled test notification");
+    print("Scheduled test notification DONE");
   }
+
 
 
 
@@ -89,8 +90,11 @@ class NotificationService {
     required String body,
     required DateTime scheduledTime,
   }) async {
+    final tz.TZDateTime scheduledTZ =
+    tz.TZDateTime.from(scheduledTime, tz.local);
 
-    if (scheduledTime.isBefore(DateTime.now())) {
+
+    if (scheduledTZ.isBefore(tz.TZDateTime.now(tz.local))) {
       Get.snackbar("Error", "Scheduled time cannot be in the past");
       return;
     }
@@ -99,7 +103,7 @@ class NotificationService {
       id,
       title,
       body,
-      tz.TZDateTime.from(scheduledTime, tz.local),
+      scheduledTZ,
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'task_channel',
@@ -109,12 +113,16 @@ class NotificationService {
           priority: Priority.high,
         ),
       ),
+
+
       androidAllowWhileIdle: true,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+
       uiLocalNotificationDateInterpretation:
       UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
+
 
 
   static Future<void> cancelNotification(int id) async {

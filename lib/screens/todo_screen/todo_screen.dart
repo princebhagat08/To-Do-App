@@ -22,9 +22,9 @@ class TodoScreen extends StatelessWidget {
         controller.clearSearch();
         return true;
       },
-      child: SafeArea(
-        child: Scaffold(
-          body: Padding(
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,9 +39,9 @@ class TodoScreen extends StatelessWidget {
               ],
             ),
           ),
-          floatingActionButton: AddTaskButton(),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         ),
+        floatingActionButton: AddTaskButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }

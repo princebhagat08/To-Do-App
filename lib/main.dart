@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -19,10 +20,8 @@ void main() async{
   Hive.registerAdapter(TaskPriorityAdapter());
   await Hive.openBox<Task>('tasksBox');
 
-  tz.initializeTimeZones();
-  tz.setLocalLocation(tz.getLocation('Asia/Kolkata'));
-  await NotificationService.init();
 
+  await NotificationService.init();
 
   runApp(const MyApp());
 }
@@ -43,3 +42,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
