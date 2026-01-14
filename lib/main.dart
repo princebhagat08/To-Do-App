@@ -14,15 +14,11 @@ import 'models/task.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
   Hive.registerAdapter(TaskPriorityAdapter());
   await Hive.openBox<Task>('tasksBox');
-
-
   await NotificationService.init();
-
   runApp(const MyApp());
 }
 
@@ -37,7 +33,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       defaultTransition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
-      initialRoute: AppRoutes.todo,
+      initialRoute: AppRoutes.splash,
       getPages: AppPages.pages,
     );
   }
