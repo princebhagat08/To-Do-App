@@ -69,10 +69,10 @@ dependencies:
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/14e1ba13-6a7f-4d02-955d-c0b3149808fe" width="220" />
-  <img src="https://github.com/user-attachments/assets/6c9f7151-5509-4979-b0b7-28052b9f3912" width="220" />
-  <img src="https://github.com/user-attachments/assets/8cf87323-7572-496f-83ca-3d150bf23ba7" width="220" />
-  <img src="https://github.com/user-attachments/assets/d7c57d50-3a8d-4ce3-bc6d-f4b26c74fdda" width="220" />
+  <img src="https://github.com/user-attachments/assets/14e1ba13-6a7f-4d02-955d-c0b3149808fe" width="200" />
+  <img src="https://github.com/user-attachments/assets/6c9f7151-5509-4979-b0b7-28052b9f3912" width="200" />
+  <img src="https://github.com/user-attachments/assets/8cf87323-7572-496f-83ca-3d150bf23ba7" width="200" />
+  <img src="https://github.com/user-attachments/assets/d7c57d50-3a8d-4ce3-bc6d-f4b26c74fdda" width="200" />
 </p>
 
 
