@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:todo/constants/app_color.dart';
 import 'package:todo/routes/app_routes.dart';
 
-
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -19,22 +17,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
 @override
   void initState() {
+  super.initState();
   _controller = AnimationController(
     vsync: this,
     duration: Duration(seconds: 3),
   );
   _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
   _controller.forward();
-    _initializeApp();
-    super.initState();
+  Future.delayed(const Duration(seconds: 2), () {
+    Get.offAllNamed(AppRoutes.todo);
+  });
   }
 
-  Future<void> _initializeApp()async{
 
-    await Future.delayed(const Duration(seconds: 2));
-
-    Get.offNamed(AppRoutes.todo);
-  }
 
   @override
   void dispose() {

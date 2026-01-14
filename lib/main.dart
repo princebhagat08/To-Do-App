@@ -7,8 +7,6 @@ import 'package:todo/constants/app_theme.dart';
 import 'package:todo/routes/app_pages.dart';
 import 'package:todo/routes/app_routes.dart';
 import 'package:todo/services/notification_service.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 import 'models/task.dart';
 
 

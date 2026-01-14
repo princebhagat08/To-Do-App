@@ -51,6 +51,8 @@ class TaskController extends GetxController {
 
       return sameDate && matchesSearch;
     }).toList();
+
+    sortByPriority();
   }
 
   void sortByPriority() {
