@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import '../models/task.dart';
+import '../services/notification_service.dart';
 
 
 class TaskController extends GetxController {
   final selectedDate = DateTime.now().obs;
-  final tasks = <Task>[].obs;
+  var tasks = <Task>[].obs;
   final searchQuery = ''.obs;
 
+  final Box<Task> taskBox = Hive.box<Task>('tasksBox');
   final searchController = TextEditingController();
   final searchFocusNode = FocusNode();
 
@@ -17,18 +20,30 @@ class TaskController extends GetxController {
   void onInit() {
     everAll([selectedDate, tasks, searchQuery], (_) => _filterTasks());
     _filterTasks();
+    loadTasks();
     super.onInit();
   }
 
+  void loadTasks() {
+    tasks.value = taskBox.values.toList();
+    _filterTasks();
+    sortByPriority();
+  }
+
+  void addTask(Task task) {
+    taskBox.add(task);
+    loadTasks();
+    refreshTasks();
+  }
 
   void _filterTasks() {
     final query = searchQuery.value.toLowerCase();
 
     filteredTasks.value = tasks.where((t) {
       final sameDate =
-          t.dueDate.year == selectedDate.value.year &&
-              t.dueDate.month == selectedDate.value.month &&
-              t.dueDate.day == selectedDate.value.day;
+          t.date.year == selectedDate.value.year &&
+              t.date.month == selectedDate.value.month &&
+              t.date.day == selectedDate.value.day;
 
       final matchesSearch =
           t.title.toLowerCase().contains(query) ||
@@ -37,6 +52,21 @@ class TaskController extends GetxController {
       return sameDate && matchesSearch;
     }).toList();
   }
+
+  void sortByPriority() {
+    filteredTasks.sort((a, b) {
+
+      if (a.isCompleted != b.isCompleted) {
+        return a.isCompleted ? 1 : -1;
+      }
+
+
+      return b.priority.index.compareTo(a.priority.index);
+    });
+
+    filteredTasks.refresh();
+  }
+
 
   void updateSearch(String value) {
     searchQuery.value = value;
@@ -52,10 +82,24 @@ class TaskController extends GetxController {
     selectedDate.value = date;
   }
 
-  void addTask(Task task) {
-    tasks.add(task);
+  void toggleTask(Task task) {
+    task.isCompleted = !task.isCompleted;
+    task.save();
+    loadTasks();
   }
 
+  void deleteTask(Task task) {
+    NotificationService.cancelNotification(task.key);
+    task.delete();
+    loadTasks();
+    refreshTasks();
+  }
+
+  void refreshTasks() {
+    tasks.refresh();
+    filteredTasks.refresh();
+    sortByPriority();
+  }
 
   @override
   void onClose() {

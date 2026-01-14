@@ -5,6 +5,7 @@ import 'package:todo/constants/txt_style.dart';
 import 'package:todo/controllers/task_controller.dart';
 
 import '../../../models/task.dart';
+import '../../../routes/app_routes.dart';
 
 class TaskList extends StatelessWidget {
   const TaskList({super.key});
@@ -12,11 +13,12 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TaskController controller = Get.find();
+
     return Expanded(
       child: Obx(() {
         if (controller.filteredTasks.isEmpty) {
-          return  Center(
-            child: Text("No tasks for today",style: mediumText,),
+          return Center(
+            child: Text("No tasks for today", style: mediumText),
           );
         }
 
@@ -25,7 +27,7 @@ class TaskList extends StatelessWidget {
           itemCount: controller.filteredTasks.length,
           itemBuilder: (context, index) {
             final task = controller.filteredTasks[index];
-            return _taskCard(task);
+            return _taskCard(context, controller, task);
           },
         );
       }),
@@ -33,72 +35,111 @@ class TaskList extends StatelessWidget {
   }
 
 
-  Widget _taskCard(Task task) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        task.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+
+  Widget _taskCard(
+      BuildContext context,
+      TaskController controller,
+      Task task,
+      ) {
+    return GestureDetector(
+      onTap: () => _showTaskOptions(context, controller, task),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Checkbox(
+              value: task.isCompleted,
+              onChanged: (_) => controller.toggleTask(task),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+
+            const SizedBox(width: 8),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          task.title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            decoration: task.isCompleted
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                            color: task.isCompleted
+                                ? Colors.grey
+                                : Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
+                      const SizedBox(width: 8),
+                      _priorityChip(task.priority),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    task.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: task.isCompleted
+                          ? Colors.grey
+                          : Colors.grey.shade600,
+                      decoration: task.isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
                     ),
-                    const SizedBox(width: 8),
-                    _priorityChip(task.priority),
-                  ],
-                ),
-                const SizedBox(height: 6),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
                 Text(
-                  task.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  DateFormat("hh:mm a").format(task.date),
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
+
+
+                if (task.reminderTime != null)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Icon(
+                      Icons.alarm,
+                      size: 16,
+                      color: Colors.redAccent,
+                    ),
+                  ),
               ],
             ),
-          ),
-
-          const SizedBox(width: 12),
-
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                DateFormat("hh:mm").format(task.dueDate),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-
 
 
   Widget _priorityChip(TaskPriority priority) {
@@ -139,4 +180,45 @@ class TaskList extends StatelessWidget {
 
 
 
+  void _showTaskOptions(
+      BuildContext context,
+      TaskController controller,
+      Task task,
+      ) {
+    Get.bottomSheet(
+      SafeArea(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text("Edit Task"),
+                onTap: () {
+                  Get.back();
+                  Get.toNamed(
+                    AppRoutes.editTask,
+                    arguments: task,
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text("Delete Task"),
+                onTap: () {
+                  Get.back();
+                  controller.deleteTask(task);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

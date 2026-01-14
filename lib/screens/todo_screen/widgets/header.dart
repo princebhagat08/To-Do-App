@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo/constants/txt_style.dart';
 
+
+
 class Header extends StatelessWidget {
   const Header({super.key});
 
@@ -9,10 +11,8 @@ class Header extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          "Your Task",
-          style: xLargeBoldText,
-        ),
+        Text("Your Task", style: xLargeBoldText),
+
       ],
     );
   }

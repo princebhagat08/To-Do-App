@@ -34,7 +34,8 @@ class TodoScreen extends StatelessWidget {
                 DateSelector(),
                 SearchBarWidget(),
                 Divider(color: AppColor.grey,),
-                TaskList()
+                TaskList(),
+                SizedBox(height: 40)
               ],
             ),
           ),

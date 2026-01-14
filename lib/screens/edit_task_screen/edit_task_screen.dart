@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo/constants/txt_style.dart';
-
 import '../../controllers/task_controller.dart';
 import '../../models/task.dart';
 import '../../services/notification_service.dart';
 
-class AddTaskScreen extends StatelessWidget {
-  AddTaskScreen({super.key});
+class EditTaskScreen extends StatelessWidget {
+  final Task task;
 
-  final TaskController controller = Get.find();
+  EditTaskScreen({super.key, required this.task});
 
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
@@ -17,12 +16,24 @@ class AddTaskScreen extends StatelessWidget {
   final selectedPriority = TaskPriority.medium.obs;
   final selectedDate = DateTime.now().obs;
   final selectedTime = TimeOfDay.now().obs;
-  
+
   final reminderEnabled = false.obs;
   DateTime? reminderDateTime;
 
   @override
   Widget build(BuildContext context) {
+
+    titleController.text = task.title;
+    descriptionController.text = task.description;
+    selectedPriority.value = task.priority;
+    selectedDate.value = task.date;
+    selectedTime.value = TimeOfDay.fromDateTime(task.date);
+
+    if (task.reminderTime != null) {
+      reminderEnabled.value = true;
+      reminderDateTime = task.reminderTime;
+    }
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -42,7 +53,7 @@ class AddTaskScreen extends StatelessWidget {
                 _dateTimeCard(context),
                 const SizedBox(height: 12),
                 _reminderTile(context),
-                SizedBox(height: 80,)
+                SizedBox(height: 80,),
               ],
             ),
           ),
@@ -59,7 +70,7 @@ class AddTaskScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Add Task", style: xLargeBoldText),
+        Text("Edit Task", style: xLargeBoldText),
         IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Get.back(),
@@ -108,18 +119,11 @@ class AddTaskScreen extends StatelessWidget {
             children: TaskPriority.values.map((priority) {
               final isSelected = selectedPriority.value == priority;
 
-              Color color;
-              switch (priority) {
-                case TaskPriority.low:
-                  color = Colors.green;
-                  break;
-                case TaskPriority.medium:
-                  color = Colors.orange;
-                  break;
-                case TaskPriority.high:
-                  color = Colors.red;
-                  break;
-              }
+              Color color = switch (priority) {
+                TaskPriority.low => Colors.green,
+                TaskPriority.medium => Colors.orange,
+                TaskPriority.high => Colors.red,
+              };
 
               return GestureDetector(
                 onTap: () => selectedPriority.value = priority,
@@ -258,8 +262,8 @@ class AddTaskScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
           ),
-          onPressed: _saveTask,
-          child: Text("Add Task", style: mediumBoldWhiteText),
+          onPressed: _updateTask,
+          child: Text("Update Task", style: mediumBoldWhiteText),
         ),
       ),
     );
@@ -267,13 +271,13 @@ class AddTaskScreen extends StatelessWidget {
 
 
 
-  void _saveTask() {
+  void _updateTask() {
     if (titleController.text.trim().isEmpty) {
       Get.snackbar("Error", "Task title is required");
       return;
     }
 
-    final dueDateTime = DateTime(
+    final updatedDateTime = DateTime(
       selectedDate.value.year,
       selectedDate.value.month,
       selectedDate.value.day,
@@ -281,23 +285,23 @@ class AddTaskScreen extends StatelessWidget {
       selectedTime.value.minute,
     );
 
-    final task = Task(
-      title: titleController.text.trim(),
-      description: descriptionController.text.trim(),
-      date: dueDateTime,
-      priority: selectedPriority.value,
-      reminderTime: reminderEnabled.value ? reminderDateTime : null,
-    );
 
-    controller.addTask(task);
+    task.title = titleController.text.trim();
+    task.description = descriptionController.text.trim();
+    task.priority = selectedPriority.value;
+    task.date = updatedDateTime;
+    task.reminderTime = reminderEnabled.value ? reminderDateTime : null;
+
+    task.save();
+    Get.find<TaskController>().refreshTasks();
 
 
-    if (reminderEnabled.value && reminderDateTime != null) {
+    if (task.reminderTime != null) {
       NotificationService.scheduleNotification(
-        id:  task.key,
+        id: task.key,
         title: "Task Reminder",
         body: task.title,
-        scheduledTime: reminderDateTime!,
+        scheduledTime: task.reminderTime!,
       );
     }
 
