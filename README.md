@@ -36,6 +36,9 @@ The app uses **GetX** for state management, **Hive** for local storage, and **fl
 
 ---
 
+## Thought Process
+While designing and developing this app, my primary focus was simplicity, reliability, and performance, keeping real-world user behavior in mind. I am using Flutter framework for single codebase and smooth UI. For local data, I used Hive because it is lightweight, fast and works efficiently for offline app. Since it is a very small app hence I decided to use GetX state management. It has minimal boilerplate code, clear separation of logic and reactive updates. For alert I have used flutter_local_notification because it is good to give push notification even if the user has no internet. For future scope I have decided to integrate firebase for firestore and FCM. Then I will able to sync the task of the user whenever user is online.
+
 ##  App Architecture
 
 - **GetX Controllers**
