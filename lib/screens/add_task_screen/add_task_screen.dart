@@ -84,7 +84,6 @@ class AddTaskScreen extends StatelessWidget {
     return _inputContainer(
       TextField(
         controller: descriptionController,
-        maxLines: 3,
         decoration: const InputDecoration(
           hintText: "Task description",
           border: InputBorder.none,

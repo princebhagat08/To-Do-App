@@ -12,7 +12,7 @@ class NotificationService {
   static Future<void> init() async {
     print("Notification init called");
     tz.initializeTimeZones();
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const android = AndroidInitializationSettings('@mipmap/launcher_icon');
 
     const settings = InitializationSettings(
       android: android,
