@@ -12,7 +12,10 @@ class NotificationService {
   static Future<void> init() async {
     print("Notification init called");
     tz.initializeTimeZones();
-    const android = AndroidInitializationSettings('@mipmap/launcher_icon');
+    // const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const android =
+    AndroidInitializationSettings('ic_notification');
+
 
     const settings = InitializationSettings(
       android: android,
@@ -47,6 +50,7 @@ class NotificationService {
           'Test',
           importance: Importance.max,
           priority: Priority.high,
+          icon: 'ic_notification',
         ),
       ),
     );
@@ -69,6 +73,7 @@ class NotificationService {
           'Scheduled Test',
           importance: Importance.max,
           priority: Priority.high,
+          icon: 'ic_notification',
         ),
       ),
       androidAllowWhileIdle: true,
@@ -111,6 +116,7 @@ class NotificationService {
           channelDescription: 'Task reminder notifications',
           importance: Importance.max,
           priority: Priority.high,
+          icon: 'ic_notification',
         ),
       ),
 
