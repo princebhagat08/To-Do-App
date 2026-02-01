@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:background="@drawable/glassy_widget_background">
+    
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tasks"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:alpha="0.95"
+        android:layout_marginBottom="8dp"
+        android:paddingStart="4dp"/>
+    
+    <ListView
+        android:id="@+id/task_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widget_title"
+        android:divider="@null"
+        android:dividerHeight="8dp"/>
+    
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widget_title"
+        android:gravity="center"
+        android:text="No tasks available"
+        android:textColor="#E6FFFFFF"
+        android:padding="16dp"
+        android:visibility="gone"/>
+</RelativeLayout>
