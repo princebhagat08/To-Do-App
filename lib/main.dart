@@ -5,9 +5,9 @@ import 'package:todo/constants/app_theme.dart';
 import 'package:todo/routes/app_pages.dart';
 import 'package:todo/routes/app_routes.dart';
 import 'package:todo/services/notification_service.dart';
+import 'package:todo/services/home_widget_service.dart';
 
 import 'models/task.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +17,7 @@ void main() async {
   Hive.registerAdapter(TaskPriorityAdapter());
   await Hive.openBox<Task>('tasksBox');
   await NotificationService.init();
+  await HomeWidgetService.init();
 
   runApp(const MyApp());
 }
@@ -37,4 +38,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

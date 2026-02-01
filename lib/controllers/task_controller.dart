@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import '../models/task.dart';
 import '../services/notification_service.dart';
-
+import '../services/home_widget_service.dart';
 
 class TaskController extends GetxController {
   final selectedDate = DateTime.now().obs;
@@ -28,6 +28,7 @@ class TaskController extends GetxController {
     tasks.value = taskBox.values.toList();
     _filterTasks();
     sortByPriority();
+    HomeWidgetService.updateWidget(tasks);
   }
 
   void addTask(Task task) {
@@ -39,36 +40,34 @@ class TaskController extends GetxController {
   void _filterTasks() {
     final query = searchQuery.value.toLowerCase();
 
-    filteredTasks.value = tasks.where((t) {
-      final sameDate =
-          t.date.year == selectedDate.value.year &&
+    filteredTasks.value =
+        tasks.where((t) {
+          final sameDate =
+              t.date.year == selectedDate.value.year &&
               t.date.month == selectedDate.value.month &&
               t.date.day == selectedDate.value.day;
 
-      final matchesSearch =
-          t.title.toLowerCase().contains(query) ||
+          final matchesSearch =
+              t.title.toLowerCase().contains(query) ||
               t.description.toLowerCase().contains(query);
 
-      return sameDate && matchesSearch;
-    }).toList();
+          return sameDate && matchesSearch;
+        }).toList();
 
     sortByPriority();
   }
 
   void sortByPriority() {
     filteredTasks.sort((a, b) {
-
       if (a.isCompleted != b.isCompleted) {
         return a.isCompleted ? 1 : -1;
       }
-
 
       return b.priority.index.compareTo(a.priority.index);
     });
 
     filteredTasks.refresh();
   }
-
 
   void updateSearch(String value) {
     searchQuery.value = value;
@@ -88,6 +87,7 @@ class TaskController extends GetxController {
     task.isCompleted = !task.isCompleted;
     task.save();
     loadTasks();
+    HomeWidgetService.updateWidget(tasks);
   }
 
   void deleteTask(Task task) {
@@ -109,6 +109,4 @@ class TaskController extends GetxController {
     searchFocusNode.dispose();
     super.onClose();
   }
-
 }
-
