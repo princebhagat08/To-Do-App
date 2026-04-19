@@ -20,7 +20,7 @@ class AddTaskScreen extends StatelessWidget {
   final selectedTime = TimeOfDay.now().obs;
 
   final reminderEnabled = false.obs;
-  DateTime? reminderDateTime;
+  final reminderDateTime = Rxn<DateTime>();
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +130,9 @@ class AddTaskScreen extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color:
-                            isSelected ? color.withOpacity(0.15) : Colors.white,
+                            isSelected
+                                ? color.withValues(alpha: 0.15)
+                                : Colors.white,
                         borderRadius: BorderRadius.circular(20.r),
                       ),
                       child: Text(
@@ -199,8 +201,8 @@ class AddTaskScreen extends StatelessWidget {
           leading: const Icon(Icons.alarm),
           title: const Text("Reminder"),
           subtitle: Text(
-            reminderEnabled.value && reminderDateTime != null
-                ? reminderDateTime.toString()
+            reminderEnabled.value && reminderDateTime.value != null
+                ? reminderDateTime.value.toString()
                 : "No reminder set",
           ),
           trailing: Switch(
@@ -209,7 +211,7 @@ class AddTaskScreen extends StatelessWidget {
               reminderEnabled.value = value;
 
               if (!value) {
-                reminderDateTime = null;
+                reminderDateTime.value = null;
                 return;
               }
 
@@ -225,6 +227,8 @@ class AddTaskScreen extends StatelessWidget {
                 return;
               }
 
+              if (!context.mounted) return;
+
               final time = await showTimePicker(
                 context: context,
                 initialTime: TimeOfDay.now(),
@@ -235,7 +239,7 @@ class AddTaskScreen extends StatelessWidget {
                 return;
               }
 
-              reminderDateTime = DateTime(
+              reminderDateTime.value = DateTime(
                 date.year,
                 date.month,
                 date.day,
@@ -288,17 +292,17 @@ class AddTaskScreen extends StatelessWidget {
       description: descriptionController.text.trim(),
       date: dueDateTime,
       priority: selectedPriority.value,
-      reminderTime: reminderEnabled.value ? reminderDateTime : null,
+      reminderTime: reminderEnabled.value ? reminderDateTime.value : null,
     );
 
     controller.addTask(task);
 
-    if (reminderEnabled.value && reminderDateTime != null) {
+    if (reminderEnabled.value && reminderDateTime.value != null) {
       NotificationService.scheduleNotification(
         id: task.key,
         title: "Task Reminder",
         body: task.title,
-        scheduledTime: reminderDateTime!,
+        scheduledTime: reminderDateTime.value!,
       );
     }
 

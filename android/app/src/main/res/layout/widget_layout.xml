@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="12dp"
     android:background="@drawable/glassy_widget_background">
     
@@ -19,7 +19,7 @@
     <ListView
         android:id="@+id/task_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/widget_title"
         android:divider="@null"
         android:dividerHeight="8dp"/>

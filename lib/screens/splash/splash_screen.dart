@@ -1,13 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:todo/constants/app_color.dart';
 import 'package:todo/routes/app_routes.dart';
-
-import '../../models/task.dart';
-import '../../services/notification_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
