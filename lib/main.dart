@@ -15,6 +15,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
   Hive.registerAdapter(TaskPriorityAdapter());
+  Hive.registerAdapter(TaskRecurrenceAdapter());
   await Hive.openBox<Task>('tasksBox');
   await NotificationService.init();
 

@@ -42,7 +42,7 @@ class TodoScreen extends StatelessWidget {
             ),
           ),
         ),
-        floatingActionButton: AddTaskButton(),
+        floatingActionButton: const AddTaskButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );

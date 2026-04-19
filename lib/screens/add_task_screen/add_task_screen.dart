@@ -16,8 +16,9 @@ class AddTaskScreen extends StatelessWidget {
   final descriptionController = TextEditingController();
 
   final selectedPriority = TaskPriority.medium.obs;
-  final selectedDate = DateTime.now().obs;
+  late final Rx<DateTime> selectedDate = controller.selectedDate.value.obs;
   final selectedTime = TimeOfDay.now().obs;
+  final selectedRecurrence = TaskRecurrence.none.obs;
 
   final reminderEnabled = false.obs;
   final reminderDateTime = Rxn<DateTime>();
@@ -39,6 +40,8 @@ class AddTaskScreen extends StatelessWidget {
                 _descriptionField(),
                 SizedBox(height: 20.h),
                 _prioritySelector(),
+                SizedBox(height: 20.h),
+                _recurrenceSelector(),
                 SizedBox(height: 20.h),
                 _dateTimeCard(context),
                 SizedBox(height: 12.h),
@@ -146,6 +149,46 @@ class AddTaskScreen extends StatelessWidget {
                     ),
                   );
                 }).toList(),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _recurrenceSelector() {
+    return Obx(() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 8.w),
+            child: Text("Repeat", style: mediumBoldText),
+          ),
+          SizedBox(height: 10.h),
+          Wrap(
+            spacing: 12.w,
+            runSpacing: 12.h,
+            children: TaskRecurrence.values.map((recurrence) {
+              final isSelected = selectedRecurrence.value == recurrence;
+              return GestureDetector(
+                onTap: () => selectedRecurrence.value = recurrence,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.purple.withValues(alpha: 0.12) : Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    _recurrenceLabel(recurrence),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.purple,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       );
@@ -279,6 +322,11 @@ class AddTaskScreen extends StatelessWidget {
       return;
     }
 
+    if (controller.isDateReadOnly(selectedDate.value)) {
+      Get.snackbar("Read only", "Past days are read only");
+      return;
+    }
+
     final dueDateTime = DateTime(
       selectedDate.value.year,
       selectedDate.value.month,
@@ -293,6 +341,7 @@ class AddTaskScreen extends StatelessWidget {
       date: dueDateTime,
       priority: selectedPriority.value,
       reminderTime: reminderEnabled.value ? reminderDateTime.value : null,
+      recurrence: selectedRecurrence.value,
     );
 
     controller.addTask(task);
@@ -318,5 +367,18 @@ class AddTaskScreen extends StatelessWidget {
       ),
       child: child,
     );
+  }
+
+  String _recurrenceLabel(TaskRecurrence recurrence) {
+    switch (recurrence) {
+      case TaskRecurrence.none:
+        return "Doesn't repeat";
+      case TaskRecurrence.daily:
+        return "Daily";
+      case TaskRecurrence.weekly:
+        return "Weekly";
+      case TaskRecurrence.monthly:
+        return "Monthly";
+    }
   }
 }

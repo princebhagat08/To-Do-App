@@ -5,7 +5,6 @@ import 'package:todo/routes/app_routes.dart';
 
 import '../../../constants/txt_style.dart';
 import '../../../controllers/task_controller.dart';
-import '../../../models/task.dart';
 
 class AddTaskButton extends StatelessWidget {
   const AddTaskButton({super.key});
@@ -13,24 +12,30 @@ class AddTaskButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TaskController controller = Get.find();
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: SizedBox(
-        width: double.infinity,
-        height: 52.h,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14.r),
+    return Obx(() {
+      if (controller.isSelectedDateInPast) {
+        return const SizedBox.shrink();
+      }
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: SizedBox(
+          width: double.infinity,
+          height: 52.h,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.r),
+              ),
             ),
+            onPressed: () {
+              Get.toNamed(AppRoutes.addTask);
+            },
+            child: Text("+ Add Task", style: mediumBoldWhiteText),
           ),
-          onPressed: () {
-            Get.toNamed(AppRoutes.addTask);
-          },
-          child: Text("+ Add Task", style: mediumBoldWhiteText),
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -16,6 +16,21 @@ enum TaskPriority {
   high,
 }
 
+@HiveType(typeId: 2)
+enum TaskRecurrence {
+  @HiveField(0)
+  none,
+
+  @HiveField(1)
+  daily,
+
+  @HiveField(2)
+  weekly,
+
+  @HiveField(3)
+  monthly,
+}
+
 
 @HiveType(typeId: 0)
 class Task extends HiveObject {
@@ -37,6 +52,9 @@ class Task extends HiveObject {
   @HiveField(5)
   TaskPriority priority;
 
+  @HiveField(6)
+  TaskRecurrence recurrence;
+
   Task({
     required this.title,
     required this.description,
@@ -44,6 +62,7 @@ class Task extends HiveObject {
     this.isCompleted = false,
     this.reminderTime,
     this.priority = TaskPriority.medium,
+    this.recurrence = TaskRecurrence.none,
   });
 }
 

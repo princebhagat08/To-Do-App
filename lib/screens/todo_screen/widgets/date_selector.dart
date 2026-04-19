@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:todo/controllers/task_controller.dart';
 
 class DateSelector extends StatelessWidget {
@@ -10,7 +11,7 @@ class DateSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final TaskController controller = Get.find();
     return SizedBox(
-      height: 80.h,
+      height: 94.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 7,
@@ -38,6 +39,15 @@ class DateSelector extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
+                      DateFormat('EEE').format(date).toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected ? Colors.white70 : Colors.grey,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
                       "${date.day}",
                       style: TextStyle(
                         fontSize: 18.sp,
@@ -50,7 +60,7 @@ class DateSelector extends StatelessWidget {
                       _month(date),
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: isSelected ? Colors.white70 : Colors.grey,
+                        color: isSelected ? Colors.white : Colors.grey,
                       ),
                     ),
                   ],
@@ -64,20 +74,6 @@ class DateSelector extends StatelessWidget {
   }
 
   String _month(DateTime date) {
-    const months = [
-      "JAN",
-      "FEB",
-      "MAR",
-      "APR",
-      "MAY",
-      "JUN",
-      "JUL",
-      "AUG",
-      "SEP",
-      "OCT",
-      "NOV",
-      "DEC",
-    ];
-    return months[date.month - 1];
+    return DateFormat('MMM').format(date).toUpperCase();
   }
 }

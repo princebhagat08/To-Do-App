@@ -25,6 +25,9 @@ class TaskController extends GetxController {
 
   RxList<Task> filteredTasks = <Task>[].obs;
 
+  DateTime get _todayStart => _startOfDay(DateTime.now());
+  bool get isSelectedDateInPast => isDateReadOnly(selectedDate.value);
+
   @override
   void onInit() {
     everAll([selectedDate, tasks, searchQuery], (_) => _filterTasks());
@@ -34,6 +37,7 @@ class TaskController extends GetxController {
   }
 
   Future<void> loadTasks() async {
+    await _pruneOldTasks();
     await _applyPendingWidgetCompletions();
     tasks.value = taskBox.values.toList();
     _filterTasks();
@@ -42,6 +46,10 @@ class TaskController extends GetxController {
   }
 
   void addTask(Task task) {
+    if (isDateReadOnly(task.date)) {
+      Get.snackbar("Read only", "Past days are read only");
+      return;
+    }
     taskBox.add(task);
     loadTasks();
   }
@@ -93,15 +101,38 @@ class TaskController extends GetxController {
   }
 
   void toggleTask(Task task) {
+    if (isDateReadOnly(task.date)) {
+      return;
+    }
+
+    final wasIncomplete = !task.isCompleted;
     task.isCompleted = !task.isCompleted;
     task.save();
+    if (wasIncomplete && task.recurrence != TaskRecurrence.none) {
+      _createNextRecurringTask(task);
+    }
     loadTasks();
   }
 
   void deleteTask(Task task) {
+    if (isDateReadOnly(task.date)) {
+      return;
+    }
     NotificationService.cancelNotification(task.key);
     task.delete();
     loadTasks();
+  }
+
+  Future<void> deleteAllTasks() async {
+    for (final task in taskBox.values) {
+      if (task.key is int) {
+        await NotificationService.cancelNotification(task.key as int);
+      }
+    }
+    await taskBox.clear();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_widgetCompletedTaskIdsKey);
+    await loadTasks();
   }
 
   void refreshTasks() {
@@ -109,6 +140,10 @@ class TaskController extends GetxController {
     _filterTasks();
     sortByPriority();
     syncWidgetTasks();
+  }
+
+  bool isDateReadOnly(DateTime date) {
+    return _startOfDay(date).isBefore(_todayStart);
   }
 
   Future<void> syncWidgetTasks() async {
@@ -166,12 +201,26 @@ class TaskController extends GetxController {
       final key = task.key;
       if (key is int && pendingIds.contains(key) && !task.isCompleted) {
         task.isCompleted = true;
+        if (task.recurrence != TaskRecurrence.none) {
+          _createNextRecurringTask(task);
+        }
         await task.save();
         NotificationService.cancelNotification(key);
       }
     }
 
     await prefs.remove(_widgetCompletedTaskIdsKey);
+  }
+
+  Future<void> _pruneOldTasks() async {
+    final cutoff = _todayStart.subtract(const Duration(days: 2));
+    final staleTasks = taskBox.values.where((task) => _startOfDay(task.date).isBefore(cutoff)).toList();
+    for (final task in staleTasks) {
+      if (task.key is int) {
+        await NotificationService.cancelNotification(task.key as int);
+      }
+      await task.delete();
+    }
   }
 
   int _compareTasks(Task a, Task b) {
@@ -187,6 +236,43 @@ class TaskController extends GetxController {
     return a.date.compareTo(b.date);
   }
 
+  void _createNextRecurringTask(Task task) {
+    final nextDate = _nextRecurringDate(task.date, task.recurrence);
+    final nextReminder = _nextReminderTime(task.date, nextDate, task.reminderTime);
+
+    taskBox.add(
+      Task(
+        title: task.title,
+        description: task.description,
+        date: nextDate,
+        reminderTime: nextReminder,
+        priority: task.priority,
+        recurrence: task.recurrence,
+      ),
+    );
+  }
+
+  DateTime _nextRecurringDate(DateTime date, TaskRecurrence recurrence) {
+    switch (recurrence) {
+      case TaskRecurrence.none:
+        return date;
+      case TaskRecurrence.daily:
+        return date.add(const Duration(days: 1));
+      case TaskRecurrence.weekly:
+        return date.add(const Duration(days: 7));
+      case TaskRecurrence.monthly:
+        return DateTime(date.year, date.month + 1, date.day, date.hour, date.minute);
+    }
+  }
+
+  DateTime? _nextReminderTime(DateTime currentDate, DateTime nextDate, DateTime? reminderTime) {
+    if (reminderTime == null) {
+      return null;
+    }
+    final difference = currentDate.difference(reminderTime);
+    return nextDate.subtract(difference);
+  }
+
   String _priorityLabel(TaskPriority priority) {
     switch (priority) {
       case TaskPriority.low:
@@ -196,6 +282,10 @@ class TaskController extends GetxController {
       case TaskPriority.high:
         return 'High';
     }
+  }
+
+  DateTime _startOfDay(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
   }
 
   @override

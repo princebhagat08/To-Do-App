@@ -13,21 +13,25 @@ class EditTaskScreen extends StatelessWidget {
 
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+  final TaskController controller = Get.find();
 
   final selectedPriority = TaskPriority.medium.obs;
   final selectedDate = DateTime.now().obs;
   final selectedTime = TimeOfDay.now().obs;
+  final selectedRecurrence = TaskRecurrence.none.obs;
 
   final reminderEnabled = false.obs;
   final reminderDateTime = Rxn<DateTime>();
 
   @override
   Widget build(BuildContext context) {
+    final isReadOnly = controller.isDateReadOnly(task.date);
     titleController.text = task.title;
     descriptionController.text = task.description;
     selectedPriority.value = task.priority;
     selectedDate.value = task.date;
     selectedTime.value = TimeOfDay.fromDateTime(task.date);
+    selectedRecurrence.value = task.recurrence;
 
     if (task.reminderTime != null) {
       reminderEnabled.value = true;
@@ -44,23 +48,25 @@ class EditTaskScreen extends StatelessWidget {
               children: [
                 _topRow(),
                 SizedBox(height: 24.h),
-                _titleField(),
+                _titleField(isReadOnly),
                 SizedBox(height: 16.h),
-                _descriptionField(),
+                _descriptionField(isReadOnly),
                 SizedBox(height: 20.h),
-                _prioritySelector(),
+                _prioritySelector(isReadOnly),
                 SizedBox(height: 20.h),
-                _dateTimeCard(context),
+                _recurrenceSelector(isReadOnly),
+                SizedBox(height: 20.h),
+                _dateTimeCard(context, isReadOnly),
                 SizedBox(height: 12.h),
-                _reminderTile(context),
-                SizedBox(height: 80.h),
+                _reminderTile(context, isReadOnly),
+                if (!isReadOnly) SizedBox(height: 80.h),
               ],
             ),
           ),
         ),
       ),
-      floatingActionButton: _saveButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: isReadOnly ? null : _saveButton(),
+      floatingActionButtonLocation: isReadOnly ? null : FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -77,10 +83,11 @@ class EditTaskScreen extends StatelessWidget {
     );
   }
 
-  Widget _titleField() {
+  Widget _titleField(bool isReadOnly) {
     return _inputContainer(
       TextField(
         controller: titleController,
+        readOnly: isReadOnly,
         decoration: const InputDecoration(
           hintText: "Task title",
           border: InputBorder.none,
@@ -89,11 +96,12 @@ class EditTaskScreen extends StatelessWidget {
     );
   }
 
-  Widget _descriptionField() {
+  Widget _descriptionField(bool isReadOnly) {
     return _inputContainer(
       TextField(
         controller: descriptionController,
         maxLines: 3,
+        readOnly: isReadOnly,
         decoration: const InputDecoration(
           hintText: "Task description",
           border: InputBorder.none,
@@ -102,7 +110,7 @@ class EditTaskScreen extends StatelessWidget {
     );
   }
 
-  Widget _prioritySelector() {
+  Widget _prioritySelector(bool isReadOnly) {
     return Obx(() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +134,7 @@ class EditTaskScreen extends StatelessWidget {
                   };
 
                   return GestureDetector(
-                    onTap: () => selectedPriority.value = priority,
+                    onTap: isReadOnly ? null : () => selectedPriority.value = priority,
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 18.w,
@@ -156,7 +164,47 @@ class EditTaskScreen extends StatelessWidget {
     });
   }
 
-  Widget _dateTimeCard(BuildContext context) {
+  Widget _recurrenceSelector(bool isReadOnly) {
+    return Obx(() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 8.w),
+            child: Text("Repeat", style: mediumBoldText),
+          ),
+          SizedBox(height: 10.h),
+          Wrap(
+            spacing: 12.w,
+            runSpacing: 12.h,
+            children: TaskRecurrence.values.map((recurrence) {
+              final isSelected = selectedRecurrence.value == recurrence;
+              return GestureDetector(
+                onTap: isReadOnly ? null : () => selectedRecurrence.value = recurrence,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.purple.withValues(alpha: 0.12) : Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    _recurrenceLabel(recurrence),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.purple,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _dateTimeCard(BuildContext context, bool isReadOnly) {
     return _inputContainer(
       Column(
         children: [
@@ -167,7 +215,7 @@ class EditTaskScreen extends StatelessWidget {
               subtitle: Text(
                 "${selectedDate.value.day}-${selectedDate.value.month}-${selectedDate.value.year}",
               ),
-              onTap: () async {
+              onTap: isReadOnly ? null : () async {
                 final picked = await showDatePicker(
                   context: context,
                   initialDate: selectedDate.value,
@@ -184,7 +232,7 @@ class EditTaskScreen extends StatelessWidget {
               leading: const Icon(Icons.access_time),
               title: const Text("Due Time"),
               subtitle: Text(selectedTime.value.format(context)),
-              onTap: () async {
+              onTap: isReadOnly ? null : () async {
                 final picked = await showTimePicker(
                   context: context,
                   initialTime: selectedTime.value,
@@ -198,7 +246,7 @@ class EditTaskScreen extends StatelessWidget {
     );
   }
 
-  Widget _reminderTile(BuildContext context) {
+  Widget _reminderTile(BuildContext context, bool isReadOnly) {
     return Obx(() {
       return _inputContainer(
         ListTile(
@@ -211,7 +259,7 @@ class EditTaskScreen extends StatelessWidget {
           ),
           trailing: Switch(
             value: reminderEnabled.value,
-            onChanged: (value) async {
+            onChanged: isReadOnly ? null : (value) async {
               reminderEnabled.value = value;
 
               if (!value) {
@@ -296,9 +344,10 @@ class EditTaskScreen extends StatelessWidget {
     task.priority = selectedPriority.value;
     task.date = updatedDateTime;
     task.reminderTime = reminderEnabled.value ? reminderDateTime.value : null;
+    task.recurrence = selectedRecurrence.value;
 
     task.save();
-    Get.find<TaskController>().refreshTasks();
+    controller.refreshTasks();
 
     if (task.reminderTime != null) {
       NotificationService.scheduleNotification(
@@ -321,5 +370,18 @@ class EditTaskScreen extends StatelessWidget {
       ),
       child: child,
     );
+  }
+
+  String _recurrenceLabel(TaskRecurrence recurrence) {
+    switch (recurrence) {
+      case TaskRecurrence.none:
+        return "Doesn't repeat";
+      case TaskRecurrence.daily:
+        return "Daily";
+      case TaskRecurrence.weekly:
+        return "Weekly";
+      case TaskRecurrence.monthly:
+        return "Monthly";
+    }
   }
 }
