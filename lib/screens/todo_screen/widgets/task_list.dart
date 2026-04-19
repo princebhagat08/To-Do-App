@@ -147,10 +147,10 @@ class TaskList extends StatelessWidget {
                           ],
                         ),
 
-                        SizedBox(height: 6.h),
+                       if(task.description.isNotEmpty) SizedBox(height: 6.h),
 
                         // Description
-                        Text(
+                       if(task.description.isNotEmpty) Text(
                           task.description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -168,7 +168,7 @@ class TaskList extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(height: 6.h),
+                       SizedBox(height: 6.h),
 
                         Text(
                           DateFormat("hh:mm a").format(task.date),
@@ -177,6 +177,7 @@ class TaskList extends StatelessWidget {
                             color: Colors.grey.shade500,
                             fontWeight: FontWeight.w500,
                           ),
+                          
                         ),
 
                       
