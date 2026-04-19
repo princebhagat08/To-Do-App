@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:todo/constants/app_theme.dart';
@@ -7,7 +8,6 @@ import 'package:todo/routes/app_routes.dart';
 import 'package:todo/services/notification_service.dart';
 
 import 'models/task.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,15 +26,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Todo',
-      theme: MyTheme.theme,
-      debugShowCheckedModeBanner: false,
-      defaultTransition: Transition.rightToLeft,
-      transitionDuration: const Duration(milliseconds: 300),
-      initialRoute: AppRoutes.splash,
-      getPages: AppPages.pages,
+    return ScreenUtilInit(
+      designSize: const Size(390, 844),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder:
+          (_, __) => GetMaterialApp(
+            title: 'Todo',
+            theme: MyTheme.theme,
+            debugShowCheckedModeBanner: false,
+            defaultTransition: Transition.rightToLeft,
+            transitionDuration: const Duration(milliseconds: 300),
+            initialRoute: AppRoutes.splash,
+            getPages: AppPages.pages,
+          ),
     );
   }
 }
-

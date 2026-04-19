@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/task_controller.dart';
-
 
 class SearchBarWidget extends StatelessWidget {
   SearchBarWidget({super.key});
@@ -15,12 +15,12 @@ class SearchBarWidget extends StatelessWidget {
       onChanged: controller.updateSearch,
       decoration: InputDecoration(
         hintText: "Search tasks...",
-        prefixIcon: const Icon(Icons.search),
+        prefixIcon: Icon(Icons.search, size: 20.sp),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(vertical: 14),
+        contentPadding: EdgeInsets.symmetric(vertical: 14.h),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           borderSide: BorderSide.none,
         ),
       ),

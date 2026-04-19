@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/constants/txt_style.dart';
 import '../../controllers/task_controller.dart';
@@ -22,7 +23,6 @@ class EditTaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     titleController.text = task.title;
     descriptionController.text = task.description;
     selectedPriority.value = task.priority;
@@ -38,22 +38,22 @@ class EditTaskScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _topRow(),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 _titleField(),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 _descriptionField(),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 _prioritySelector(),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 _dateTimeCard(context),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 _reminderTile(context),
-                SizedBox(height: 80,),
+                SizedBox(height: 80.h),
               ],
             ),
           ),
@@ -64,15 +64,13 @@ class EditTaskScreen extends StatelessWidget {
     );
   }
 
-
-
   Widget _topRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("Edit Task", style: xLargeBoldText),
         IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(Icons.close, size: 22.sp),
           onPressed: () => Get.back(),
         ),
       ],
@@ -110,41 +108,47 @@ class EditTaskScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 8),
+            padding: EdgeInsets.only(left: 8.w),
             child: Text("Priority", style: mediumBoldText),
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: TaskPriority.values.map((priority) {
-              final isSelected = selectedPriority.value == priority;
+          SizedBox(height: 10.h),
+          Wrap(
+            spacing: 12.w,
+            runSpacing: 12.h,
+            children:
+                TaskPriority.values.map((priority) {
+                  final isSelected = selectedPriority.value == priority;
 
-              Color color = switch (priority) {
-                TaskPriority.low => Colors.green,
-                TaskPriority.medium => Colors.orange,
-                TaskPriority.high => Colors.red,
-              };
+                  Color color = switch (priority) {
+                    TaskPriority.low => Colors.green,
+                    TaskPriority.medium => Colors.orange,
+                    TaskPriority.high => Colors.red,
+                  };
 
-              return GestureDetector(
-                onTap: () => selectedPriority.value = priority,
-                child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: isSelected ? color.withOpacity(0.15) : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    priority.name.capitalizeFirst!,
-                    style: TextStyle(
-                      color: color,
-                      fontWeight: FontWeight.w600,
+                  return GestureDetector(
+                    onTap: () => selectedPriority.value = priority,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18.w,
+                        vertical: 10.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            isSelected ? color.withOpacity(0.15) : Colors.white,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        priority.name.capitalizeFirst!,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: color,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }).toList(),
-          )
+                  );
+                }).toList(),
+          ),
         ],
       );
     });
@@ -172,7 +176,7 @@ class EditTaskScreen extends StatelessWidget {
               },
             );
           }),
-          const Divider(height: 1),
+          Divider(height: 1.h),
           Obx(() {
             return ListTile(
               leading: const Icon(Icons.access_time),
@@ -251,15 +255,15 @@ class EditTaskScreen extends StatelessWidget {
 
   Widget _saveButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: SizedBox(
         width: double.infinity,
-        height: 52,
+        height: 52.h,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
             ),
           ),
           onPressed: _updateTask,
@@ -268,8 +272,6 @@ class EditTaskScreen extends StatelessWidget {
       ),
     );
   }
-
-
 
   void _updateTask() {
     if (titleController.text.trim().isEmpty) {
@@ -285,7 +287,6 @@ class EditTaskScreen extends StatelessWidget {
       selectedTime.value.minute,
     );
 
-
     task.title = titleController.text.trim();
     task.description = descriptionController.text.trim();
     task.priority = selectedPriority.value;
@@ -294,7 +295,6 @@ class EditTaskScreen extends StatelessWidget {
 
     task.save();
     Get.find<TaskController>().refreshTasks();
-
 
     if (task.reminderTime != null) {
       NotificationService.scheduleNotification(
@@ -310,10 +310,10 @@ class EditTaskScreen extends StatelessWidget {
 
   Widget _inputContainer(Widget child) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
       ),
       child: child,
     );

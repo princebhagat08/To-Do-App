@@ -1,8 +1,8 @@
 import 'dart:ui';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'app_color.dart';
-
 
 final fontFamily = GoogleFonts.outfit().fontFamily;
 
@@ -22,100 +22,97 @@ const largeTextsize = 18.00;
 const xLargeTextsize = 24.00;
 const xxLargeTextsize = 75.00;
 
-
-
-
 //blackColor color textstyle
 final xsmallText = TextStyle(
-  fontSize: xsmallTextsize,
+  fontSize: xsmallTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
 );
 final xsmallLightText = TextStyle(
-  fontSize: xsmallTextsize,
+  fontSize: xsmallTextsize.sp,
   color: AppColor.lightPrimary,
   fontFamily: fontFamily,
 );
 
 final smallText = TextStyle(
-  fontSize: smallTextsize,
+  fontSize: smallTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
 );
 final smallBoldText = TextStyle(
-  fontSize: smallTextsize,
+  fontSize: smallTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.bold,
 );
 
 final smallBoldColorText = TextStyle(
-  fontSize: smallTextsize,
+  fontSize: smallTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.bold,
 );
 
 final normalText = TextStyle(
-  fontSize: normalTextsize,
+  fontSize: normalTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
 );
 
 final mediumText = TextStyle(
-  fontSize: mediumTextsize,
+  fontSize: mediumTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
 );
 
 final mediumBoldText = TextStyle(
-  fontSize: mediumTextsize,
+  fontSize: mediumTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.bold,
 );
 
 final mediumBoldWhiteText = TextStyle(
-  fontSize: mediumTextsize,
+  fontSize: mediumTextsize.sp,
   color: Colors.white,
   fontFamily: fontFamily,
   fontWeight: FontWeight.w500,
 );
 
 final largeText = TextStyle(
-  fontSize: largeTextsize,
+  fontSize: largeTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
 );
 
 final largeBoldText = TextStyle(
-  fontSize: largeTextsize,
+  fontSize: largeTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.bold,
 );
 
 final xLargeText = TextStyle(
-  fontSize: xLargeTextsize,
+  fontSize: xLargeTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
 );
 
 final xLargeBoldText = TextStyle(
-  fontSize: xLargeTextsize,
+  fontSize: xLargeTextsize.sp,
   color: AppColor.blackColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.w600,
 );
 
 final xLargeBoldColorText = TextStyle(
-  fontSize: xLargeTextsize,
+  fontSize: xLargeTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.w600,
 );
 final xxLargeBoldColorText = TextStyle(
-  fontSize: xxLargeTextsize,
+  fontSize: xxLargeTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.bold,
@@ -124,39 +121,38 @@ final xxLargeBoldColorText = TextStyle(
 //whiteColor color textstyle
 
 final smallWhiteText = TextStyle(
-  fontSize: smallTextsize,
+  fontSize: smallTextsize.sp,
   color: AppColor.whiteColor,
   fontFamily: fontFamily,
 );
 
 final smallWhiteBoldText = TextStyle(
-  fontSize: smallTextsize,
+  fontSize: smallTextsize.sp,
   color: AppColor.whiteColor,
   fontWeight: FontWeight.w500,
   fontFamily: fontFamily,
 );
 
-
 final normalWhiteText = TextStyle(
-  fontSize: normalTextsize,
+  fontSize: normalTextsize.sp,
   color: AppColor.whiteColor,
   fontFamily: fontFamily,
 );
 
 final mediumWhiteText = TextStyle(
-  fontSize: mediumTextsize,
+  fontSize: mediumTextsize.sp,
   color: AppColor.whiteColor,
   fontFamily: fontFamily,
 );
 
 final largeWhiteText = TextStyle(
-  fontSize: largeTextsize,
+  fontSize: largeTextsize.sp,
   color: AppColor.whiteColor,
   fontFamily: fontFamily,
 );
 
 final xLargeWhiteText = TextStyle(
-  fontSize: xLargeTextsize,
+  fontSize: xLargeTextsize.sp,
   color: AppColor.whiteColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.w500,
@@ -165,31 +161,31 @@ final xLargeWhiteText = TextStyle(
 //light color textStyle
 
 final smallLightText = TextStyle(
-  fontSize: smallTextsize,
+  fontSize: smallTextsize.sp,
   color: AppColor.lightPrimary,
   fontFamily: fontFamily,
 );
 
 final normalLightText = TextStyle(
-  fontSize: normalTextsize,
+  fontSize: normalTextsize.sp,
   color: AppColor.lightPrimary,
   fontFamily: fontFamily,
 );
 
 final mediumLightText = TextStyle(
-  fontSize: mediumTextsize,
+  fontSize: mediumTextsize.sp,
   color: AppColor.lightPrimary,
   fontFamily: fontFamily,
 );
 
 final largeLightText = TextStyle(
-  fontSize: largeTextsize,
-  color:AppColor.lightPrimary,
+  fontSize: largeTextsize.sp,
+  color: AppColor.lightPrimary,
   fontFamily: fontFamily,
 );
 
 final xLargeLightText = TextStyle(
-  fontSize: xLargeTextsize,
+  fontSize: xLargeTextsize.sp,
   color: AppColor.lightPrimary,
   fontFamily: fontFamily,
 );
@@ -197,68 +193,69 @@ final xLargeLightText = TextStyle(
 //App color TextStyle
 
 final xSmallColorText = TextStyle(
-  fontSize: xsmallTextsize,
+  fontSize: xsmallTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
 );
 final xSmallWhiteText = TextStyle(
-  fontSize: xsmallTextsize,
+  fontSize: xsmallTextsize.sp,
   color: AppColor.whiteColor,
   fontFamily: fontFamily,
 );
 
 final smallColorText = TextStyle(
-  fontSize: smallTextsize,
+  fontSize: smallTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
 );
 
 final normalColorText = TextStyle(
-  fontSize: normalTextsize,
+  fontSize: normalTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
 );
 
 final mediumColorText = TextStyle(
-  fontSize: mediumTextsize,
+  fontSize: mediumTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
 );
 
 final mediumBoldColorText = TextStyle(
-  fontSize: mediumTextsize,
+  fontSize: mediumTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
   fontWeight: FontWeight.w400,
 );
 
 final largeColorText = TextStyle(
-  fontSize: largeTextsize,
+  fontSize: largeTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
 );
 
 final largeBoldColorText = TextStyle(
-    fontSize: largeTextsize,
-    color: AppColor.primaryColor,
-    fontFamily: fontFamily,
-    fontWeight: FontWeight.w400);
+  fontSize: largeTextsize.sp,
+  color: AppColor.primaryColor,
+  fontFamily: fontFamily,
+  fontWeight: FontWeight.w400,
+);
 
 final xLargeColorText = TextStyle(
-  fontSize: xLargeTextsize,
+  fontSize: xLargeTextsize.sp,
   color: AppColor.primaryColor,
   fontFamily: fontFamily,
 );
 
 final smallcrossedText = TextStyle(
-  fontSize: smallTextsize,
+  fontSize: smallTextsize.sp,
   color: AppColor.lightPrimary,
   fontFamily: fontFamily,
   decoration: TextDecoration.lineThrough,
 );
 
 final largeCrossedText = TextStyle(
-  fontSize: largeTextsize,
+  fontSize: largeTextsize.sp,
   color: Colors.red,
   fontFamily: fontFamily,
   decoration: TextDecoration.lineThrough,

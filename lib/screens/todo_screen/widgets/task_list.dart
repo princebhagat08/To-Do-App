@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/constants/txt_style.dart';
@@ -17,9 +18,7 @@ class TaskList extends StatelessWidget {
     return Expanded(
       child: Obx(() {
         if (controller.filteredTasks.isEmpty) {
-          return Center(
-            child: Text("No tasks for today", style: mediumText),
-          );
+          return Center(child: Text("No tasks for today", style: mediumText));
         }
 
         return ListView.builder(
@@ -34,82 +33,76 @@ class TaskList extends StatelessWidget {
     );
   }
 
-
-
-  Widget _taskCard(
-      BuildContext context,
-      TaskController controller,
-      Task task,
-      ) {
+  Widget _taskCard(BuildContext context, TaskController controller, Task task) {
     return GestureDetector(
       onTap: () => _showTaskOptions(context, controller, task),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(14),
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(14.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Checkbox(
               value: task.isCompleted,
               onChanged: (_) => controller.toggleTask(task),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(4.r),
               ),
             ),
 
-            const SizedBox(width: 8),
+            SizedBox(width: 8.w),
 
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
                           task.title,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
-                            decoration: task.isCompleted
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
-                            color: task.isCompleted
-                                ? Colors.grey
-                                : Colors.black,
+                            decoration:
+                                task.isCompleted
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
+                            color:
+                                task.isCompleted ? Colors.grey : Colors.black,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       _priorityChip(task.priority),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Text(
                     task.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 13,
-                      color: task.isCompleted
-                          ? Colors.grey
-                          : Colors.grey.shade600,
-                      decoration: task.isCompleted
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
+                      fontSize: 13.sp,
+                      color:
+                          task.isCompleted ? Colors.grey : Colors.grey.shade600,
+                      decoration:
+                          task.isCompleted
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
 
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -117,19 +110,18 @@ class TaskList extends StatelessWidget {
                 Text(
                   DateFormat("hh:mm a").format(task.date),
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     color: Colors.grey.shade600,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
 
-
                 if (task.reminderTime != null)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4),
+                  Padding(
+                    padding: EdgeInsets.only(top: 4.h),
                     child: Icon(
                       Icons.alarm,
-                      size: 16,
+                      size: 16.sp,
                       color: Colors.redAccent,
                     ),
                   ),
@@ -140,7 +132,6 @@ class TaskList extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _priorityChip(TaskPriority priority) {
     late Color color;
@@ -162,15 +153,15 @@ class TaskList extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8.r),
       ),
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 11,
+          fontSize: 11.sp,
           fontWeight: FontWeight.w600,
           color: color,
         ),
@@ -178,20 +169,18 @@ class TaskList extends StatelessWidget {
     );
   }
 
-
-
   void _showTaskOptions(
-      BuildContext context,
-      TaskController controller,
-      Task task,
-      ) {
+    BuildContext context,
+    TaskController controller,
+    Task task,
+  ) {
     Get.bottomSheet(
       SafeArea(
         child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -201,10 +190,7 @@ class TaskList extends StatelessWidget {
                 title: const Text("Edit Task"),
                 onTap: () {
                   Get.back();
-                  Get.toNamed(
-                    AppRoutes.editTask,
-                    arguments: task,
-                  );
+                  Get.toNamed(AppRoutes.editTask, arguments: task);
                 },
               ),
               ListTile(

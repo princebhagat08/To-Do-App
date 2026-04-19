@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/constants/app_color.dart';
 import 'package:todo/screens/todo_screen/widgets/add_task_button.dart';
@@ -7,8 +8,6 @@ import 'package:todo/screens/todo_screen/widgets/header.dart';
 import 'package:todo/screens/todo_screen/widgets/search_bar.dart';
 import 'package:todo/screens/todo_screen/widgets/task_list.dart';
 import '../../controllers/task_controller.dart';
-
-
 
 class TodoScreen extends StatelessWidget {
   TodoScreen({super.key});
@@ -25,17 +24,20 @@ class TodoScreen extends StatelessWidget {
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 16,
               children: [
-                Header(),
-                DateSelector(),
+                const Header(),
+                SizedBox(height: 16.h),
+                const DateSelector(),
+                SizedBox(height: 16.h),
                 SearchBarWidget(),
-                Divider(color: AppColor.grey,),
-                TaskList(),
-                SizedBox(height: 40)
+                SizedBox(height: 16.h),
+                Divider(color: AppColor.grey),
+                SizedBox(height: 16.h),
+                const TaskList(),
+                SizedBox(height: 40.h),
               ],
             ),
           ),
@@ -45,13 +47,4 @@ class TodoScreen extends StatelessWidget {
       ),
     );
   }
-
-
-
-
-
-
-
-
-
 }

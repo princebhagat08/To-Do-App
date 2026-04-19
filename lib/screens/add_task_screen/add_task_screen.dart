@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/constants/txt_style.dart';
 
@@ -17,7 +18,7 @@ class AddTaskScreen extends StatelessWidget {
   final selectedPriority = TaskPriority.medium.obs;
   final selectedDate = DateTime.now().obs;
   final selectedTime = TimeOfDay.now().obs;
-  
+
   final reminderEnabled = false.obs;
   DateTime? reminderDateTime;
 
@@ -27,22 +28,22 @@ class AddTaskScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _topRow(),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 _titleField(),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 _descriptionField(),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 _prioritySelector(),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 _dateTimeCard(context),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 _reminderTile(context),
-                SizedBox(height: 80,)
+                SizedBox(height: 80.h),
               ],
             ),
           ),
@@ -53,15 +54,13 @@ class AddTaskScreen extends StatelessWidget {
     );
   }
 
-
-
   Widget _topRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("Add Task", style: xLargeBoldText),
         IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(Icons.close, size: 22.sp),
           onPressed: () => Get.back(),
         ),
       ],
@@ -98,48 +97,54 @@ class AddTaskScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 8),
+            padding: EdgeInsets.only(left: 8.w),
             child: Text("Priority", style: mediumBoldText),
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: TaskPriority.values.map((priority) {
-              final isSelected = selectedPriority.value == priority;
+          SizedBox(height: 10.h),
+          Wrap(
+            spacing: 12.w,
+            runSpacing: 12.h,
+            children:
+                TaskPriority.values.map((priority) {
+                  final isSelected = selectedPriority.value == priority;
 
-              Color color;
-              switch (priority) {
-                case TaskPriority.low:
-                  color = Colors.green;
-                  break;
-                case TaskPriority.medium:
-                  color = Colors.orange;
-                  break;
-                case TaskPriority.high:
-                  color = Colors.red;
-                  break;
-              }
+                  Color color;
+                  switch (priority) {
+                    case TaskPriority.low:
+                      color = Colors.green;
+                      break;
+                    case TaskPriority.medium:
+                      color = Colors.orange;
+                      break;
+                    case TaskPriority.high:
+                      color = Colors.red;
+                      break;
+                  }
 
-              return GestureDetector(
-                onTap: () => selectedPriority.value = priority,
-                child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: isSelected ? color.withOpacity(0.15) : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    priority.name.capitalizeFirst!,
-                    style: TextStyle(
-                      color: color,
-                      fontWeight: FontWeight.w600,
+                  return GestureDetector(
+                    onTap: () => selectedPriority.value = priority,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18.w,
+                        vertical: 10.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            isSelected ? color.withOpacity(0.15) : Colors.white,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        priority.name.capitalizeFirst!,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: color,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }).toList(),
-          )
+                  );
+                }).toList(),
+          ),
         ],
       );
     });
@@ -167,7 +172,7 @@ class AddTaskScreen extends StatelessWidget {
               },
             );
           }),
-          const Divider(height: 1),
+          Divider(height: 1.h),
           Obx(() {
             return ListTile(
               leading: const Icon(Icons.access_time),
@@ -246,15 +251,15 @@ class AddTaskScreen extends StatelessWidget {
 
   Widget _saveButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: SizedBox(
         width: double.infinity,
-        height: 52,
+        height: 52.h,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
             ),
           ),
           onPressed: _saveTask,
@@ -263,8 +268,6 @@ class AddTaskScreen extends StatelessWidget {
       ),
     );
   }
-
-
 
   void _saveTask() {
     if (titleController.text.trim().isEmpty) {
@@ -290,10 +293,9 @@ class AddTaskScreen extends StatelessWidget {
 
     controller.addTask(task);
 
-
     if (reminderEnabled.value && reminderDateTime != null) {
       NotificationService.scheduleNotification(
-        id:  task.key,
+        id: task.key,
         title: "Task Reminder",
         body: task.title,
         scheduledTime: reminderDateTime!,
@@ -305,10 +307,10 @@ class AddTaskScreen extends StatelessWidget {
 
   Widget _inputContainer(Widget child) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
       ),
       child: child,
     );

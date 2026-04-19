@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:todo/routes/app_routes.dart';
 
@@ -13,24 +14,21 @@ class AddTaskButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final TaskController controller = Get.find();
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: SizedBox(
         width: double.infinity,
-        height: 52,
+        height: 52.h,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
             ),
           ),
           onPressed: () {
             Get.toNamed(AppRoutes.addTask);
           },
-          child:  Text(
-              "+ Add Task",
-              style: mediumBoldWhiteText
-          ),
+          child: Text("+ Add Task", style: mediumBoldWhiteText),
         ),
       ),
     );
