@@ -318,14 +318,14 @@ class EditTaskScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(14.r),
             ),
           ),
-          onPressed: _updateTask,
+          onPressed: () async => _updateTask(),
           child: Text("Update Task", style: mediumBoldWhiteText),
         ),
       ),
     );
   }
 
-  void _updateTask() {
+  Future<void> _updateTask() async {
     if (titleController.text.trim().isEmpty) {
       Get.snackbar("Error", "Task title is required");
       return;
@@ -346,11 +346,15 @@ class EditTaskScreen extends StatelessWidget {
     task.reminderTime = reminderEnabled.value ? reminderDateTime.value : null;
     task.recurrence = selectedRecurrence.value;
 
-    task.save();
-    controller.refreshTasks();
+    if (task.key is int) {
+      await NotificationService.cancelNotification(task.key as int);
+    }
+
+    await task.save();
+    await controller.loadTasks();
 
     if (task.reminderTime != null) {
-      NotificationService.scheduleNotification(
+      await NotificationService.scheduleNotification(
         id: task.key,
         title: "Task Reminder",
         body: task.title,
