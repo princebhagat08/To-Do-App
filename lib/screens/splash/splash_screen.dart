@@ -20,11 +20,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   super.initState();
   _controller = AnimationController(
     vsync: this,
-    duration: Duration(seconds: 3),
+    duration: Duration(seconds: 1),
   );
   _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
   _controller.forward();
-  Future.delayed(const Duration(seconds: 2), () {
+  Future.delayed(const Duration(seconds: 1), () {
         Get.offAllNamed(AppRoutes.todo);
       });
   }
