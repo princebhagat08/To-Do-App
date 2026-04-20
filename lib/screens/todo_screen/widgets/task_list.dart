@@ -40,117 +40,136 @@ class TaskList extends StatelessWidget {
 
     return Opacity(
       opacity: done ? 0.6 : 1.0,
-      child: GestureDetector(
-        onTap:
-            isReadOnly
-                ? null
-                : () => _showTaskOptions(context, controller, task),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10.h),
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: accentColor, width: 3.w)),
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(14.r),
+            bottomRight: Radius.circular(14.r),
+          ),
+        ),
         child: Container(
-          margin: EdgeInsets.only(bottom: 10.h),
           decoration: BoxDecoration(
-            border: Border(left: BorderSide(color: accentColor, width: 3.w)),
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(14.r),
               bottomRight: Radius.circular(14.r),
             ),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(14.r),
-                bottomRight: Radius.circular(14.r),
-              ),
-              border: Border.all(
-                color: Colors.grey.withValues(alpha: 0.15),
-                width: 0.5,
-              ),
+            border: Border.all(
+              color: Colors.grey.withValues(alpha: 0.15),
+              width: 0.5,
             ),
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 12.w,
-                top: 12.h,
-                bottom: 12.h,
-                right: 8.w,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Custom checkbox
-                  GestureDetector(
-                    onTap:
-                        isReadOnly ? null : () => controller.toggleTask(task),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 20.w,
-                      height: 20.w,
-                      margin: EdgeInsets.only(top: 2.h),
-                      decoration: BoxDecoration(
-                        color: done ? accentColor : Colors.transparent,
-                        borderRadius: BorderRadius.circular(5.r),
-                        border: Border.all(
-                          color:
-                              done
-                                  ? accentColor
-                                  : Colors.grey.withValues(alpha: 0.5),
-                          width: 1.5,
-                        ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 12.w,
+              top: 12.h,
+              bottom: 12.h,
+              right: 8.w,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: isReadOnly ? null : () => controller.toggleTask(task),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 20.w,
+                    height: 20.w,
+                    margin: EdgeInsets.only(top: 2.h),
+                    decoration: BoxDecoration(
+                      color: done ? accentColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(5.r),
+                      border: Border.all(
+                        color:
+                            done
+                                ? accentColor
+                                : Colors.grey.withValues(alpha: 0.5),
+                        width: 1.5,
                       ),
-                      child:
-                          done
-                              ? Icon(
-                                Icons.check,
-                                size: 13.sp,
-                                color: Colors.white,
-                              )
-                              : null,
                     ),
+                    child:
+                        done
+                            ? Icon(
+                              Icons.check,
+                              size: 13.sp,
+                              color: Colors.white,
+                            )
+                            : null,
                   ),
+                ),
 
-                  SizedBox(width: 12.w),
+                SizedBox(width: 12.w),
 
-                  // Title, chips, description
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Title + chips row
-                        Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 6.w,
-                          runSpacing: 4.h,
-                          children: [
-                            Text(
-                              task.title,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w500,
-                                color:
-                                    done
-                                        ? Colors.grey
-                                        : Theme.of(
-                                          context,
-                                        ).textTheme.bodyLarge?.color,
-                                decoration:
-                                    done
-                                        ? TextDecoration.lineThrough
-                                        : TextDecoration.none,
-                              ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 6.w,
+                              runSpacing: 4.h,
+                              children: [
+                                Text(
+                                  task.title,
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color:
+                                        done
+                                            ? Colors.grey
+                                            : Theme.of(
+                                              context,
+                                            ).textTheme.bodyLarge?.color,
+                                    decoration:
+                                        done
+                                            ? TextDecoration.lineThrough
+                                            : TextDecoration.none,
+                                  ),
+                                ),
+
+                                _priorityChip(task.priority),
+                                if (task.recurrence != TaskRecurrence.none)
+                                  _recurrenceChip(task.recurrence),
+
+                                if (task.reminderTime != null)
+                                  _alarmIcon(accentColor),
+                              ],
                             ),
+                          ),
+                          SizedBox(width: 8.w),
+                          _cardActionButton(
+                            icon: Icons.edit_outlined,
+                            color: Colors.black87,
+                            onTap:
+                                isReadOnly
+                                    ? null
+                                    : () => Get.toNamed(
+                                      AppRoutes.editTask,
+                                      arguments: task,
+                                    ),
+                          ),
+                          SizedBox(width: 4.w),
+                          _cardActionButton(
+                            icon: Icons.delete_outline,
+                            color: Colors.red,
+                            onTap:
+                                isReadOnly
+                                    ? null
+                                    : () => controller.deleteTask(task),
+                          ),
+                        ],
+                      ),
 
-                            _priorityChip(task.priority),
-                            if (task.recurrence != TaskRecurrence.none)
-                              _recurrenceChip(task.recurrence),
+                      if (task.description.isNotEmpty) SizedBox(height: 6.h),
 
-                            if (task.reminderTime != null)
-                              _alarmIcon(accentColor),  
-                          ],
-                        ),
-
-                       if(task.description.isNotEmpty) SizedBox(height: 6.h),
-
-                        // Description
-                       if(task.description.isNotEmpty) Text(
+                      if (task.description.isNotEmpty)
+                        Text(
                           task.description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -168,24 +187,20 @@ class TaskList extends StatelessWidget {
                           ),
                         ),
 
-                       SizedBox(height: 6.h),
+                      SizedBox(height: 6.h),
 
-                        Text(
-                          DateFormat("hh:mm a").format(task.date),
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: Colors.grey.shade500,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          
+                      Text(
+                        DateFormat("hh:mm a").format(task.date),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.grey.shade500,
+                          fontWeight: FontWeight.w500,
                         ),
-
-                      
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -258,6 +273,32 @@ class TaskList extends StatelessWidget {
     );
   }
 
+  Widget _cardActionButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10.r),
+      child: Container(
+        padding: EdgeInsets.all(6.w),
+        decoration: BoxDecoration(
+          color:
+              onTap == null
+                  ? Colors.grey.withValues(alpha: 0.08)
+                  : color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+        child: Icon(
+          icon,
+          size: 18.sp,
+          color: onTap == null ? Colors.grey : color,
+        ),
+      ),
+    );
+  }
+
   Color _priorityColor(TaskPriority priority) {
     switch (priority) {
       case TaskPriority.low:
@@ -267,45 +308,6 @@ class TaskList extends StatelessWidget {
       case TaskPriority.high:
         return const Color(0xFFE24B4A);
     }
-  }
-
-  void _showTaskOptions(
-    BuildContext context,
-    TaskController controller,
-    Task task,
-  ) {
-    Get.bottomSheet(
-      SafeArea(
-        child: Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit),
-                title: const Text("Edit Task"),
-                onTap: () {
-                  Get.back();
-                  Get.toNamed(AppRoutes.editTask, arguments: task);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text("Delete Task"),
-                onTap: () {
-                  Get.back();
-                  controller.deleteTask(task);
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   String _recurrenceLabel(TaskRecurrence recurrence) {
