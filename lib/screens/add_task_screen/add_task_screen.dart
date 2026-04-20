@@ -8,7 +8,9 @@ import '../../models/task.dart';
 import '../../services/notification_service.dart';
 
 class AddTaskScreen extends StatelessWidget {
-  AddTaskScreen({super.key});
+  AddTaskScreen({super.key}) {
+    controller.clearAddTaskDraft();
+  }
 
   final TaskController controller = Get.find();
 
@@ -64,7 +66,10 @@ class AddTaskScreen extends StatelessWidget {
         Text("Add Task", style: xLargeBoldText),
         IconButton(
           icon: Icon(Icons.close, size: 22.sp),
-          onPressed: () => Get.back(),
+          onPressed: () {
+            controller.clearAddTaskDraft();
+            Get.back();
+          },
         ),
       ],
     );
@@ -74,6 +79,7 @@ class AddTaskScreen extends StatelessWidget {
     return _inputContainer(
       TextField(
         controller: titleController,
+        onChanged: controller.updateAddTaskTitle,
         decoration: const InputDecoration(
           hintText: "Task title",
           border: InputBorder.none,
@@ -297,23 +303,27 @@ class AddTaskScreen extends StatelessWidget {
   }
 
   Widget _saveButton() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: SizedBox(
-        width: double.infinity,
-        height: 52.h,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14.r),
+    return Obx(() {
+      final isEnabled = controller.isAddTaskTitleValid;
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: SizedBox(
+          width: double.infinity,
+          height: 52.h,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isEnabled ? Colors.purple : Colors.grey,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.r),
+              ),
             ),
+            onPressed: isEnabled ? _saveTask : null,
+            child: Text("Add Task", style: mediumBoldWhiteText),
           ),
-          onPressed: _saveTask,
-          child: Text("Add Task", style: mediumBoldWhiteText),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void _saveTask() {
@@ -323,7 +333,7 @@ class AddTaskScreen extends StatelessWidget {
     }
 
     if (controller.isDateReadOnly(selectedDate.value)) {
-      Get.snackbar("Read only", "Past days are read only");
+      Get.snackbar("Read only", "Past days are read only",snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
@@ -344,7 +354,7 @@ class AddTaskScreen extends StatelessWidget {
       recurrence: selectedRecurrence.value,
     );
 
-    controller.addTask(task);
+
 
     if (reminderEnabled.value && reminderDateTime.value != null) {
       NotificationService.scheduleNotification(
@@ -355,6 +365,8 @@ class AddTaskScreen extends StatelessWidget {
       );
     }
 
+    controller.addTask(task);
+    controller.clearAddTaskDraft();
     Get.back();
   }
 

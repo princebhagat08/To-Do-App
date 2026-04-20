@@ -18,6 +18,7 @@ class TaskController extends GetxController {
   final selectedDate = DateTime.now().obs;
   var tasks = <Task>[].obs;
   final searchQuery = ''.obs;
+  final addTaskTitle = ''.obs;
 
   final Box<Task> taskBox = Hive.box<Task>('tasksBox');
   final searchController = TextEditingController();
@@ -27,6 +28,7 @@ class TaskController extends GetxController {
 
   DateTime get _todayStart => _startOfDay(DateTime.now());
   bool get isSelectedDateInPast => isDateReadOnly(selectedDate.value);
+  bool get isAddTaskTitleValid => addTaskTitle.value.trim().isNotEmpty;
 
   @override
   void onInit() {
@@ -98,6 +100,14 @@ class TaskController extends GetxController {
 
   void changeDate(DateTime date) {
     selectedDate.value = date;
+  }
+
+  void updateAddTaskTitle(String value) {
+    addTaskTitle.value = value;
+  }
+
+  void clearAddTaskDraft() {
+    addTaskTitle.value = '';
   }
 
   void toggleTask(Task task) {
