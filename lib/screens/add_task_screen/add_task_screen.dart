@@ -219,7 +219,10 @@ class AddTaskScreen extends StatelessWidget {
                   firstDate: DateTime.now(),
                   lastDate: DateTime.now().add(const Duration(days: 365)),
                 );
-                if (picked != null) selectedDate.value = picked;
+                if (picked != null) {
+                  selectedDate.value = picked;
+                  _clearReminderIfInvalid();
+                }
               },
             );
           }),
@@ -234,7 +237,10 @@ class AddTaskScreen extends StatelessWidget {
                   context: context,
                   initialTime: selectedTime.value,
                 );
-                if (picked != null) selectedTime.value = picked;
+                if (picked != null) {
+                  selectedTime.value = picked;
+                  _clearReminderIfInvalid();
+                }
               },
             );
           }),
@@ -288,13 +294,28 @@ class AddTaskScreen extends StatelessWidget {
                 return;
               }
 
-              reminderDateTime.value = DateTime(
+              final selectedReminder = DateTime(
                 date.year,
                 date.month,
                 date.day,
                 time.hour,
                 time.minute,
               );
+
+              if (_isReminderAfterDueDate(selectedReminder)) {
+                reminderEnabled.value = false;
+                reminderDateTime.value = null;
+                Get.snackbar(
+                  "Invalid reminder",
+                  "Reminder must be on or before the due date and time",
+                  snackPosition: SnackPosition.BOTTOM,
+                  colorText: Colors.black,
+                  backgroundColor: Colors.white
+                );
+                return;
+              }
+
+              reminderDateTime.value = selectedReminder;
             },
           ),
         ),
@@ -345,6 +366,19 @@ class AddTaskScreen extends StatelessWidget {
       selectedTime.value.minute,
     );
 
+    if (reminderEnabled.value &&
+        reminderDateTime.value != null &&
+        _isReminderAfterDueDate(reminderDateTime.value!)) {
+      Get.snackbar(
+        "Invalid reminder",
+        "Reminder must be on or before the due date and time",
+        snackPosition: SnackPosition.BOTTOM,
+        colorText: Colors.black,
+        backgroundColor: Colors.white
+      );
+      return;
+    }
+
     final task = Task(
       title: titleController.text.trim(),
       description: descriptionController.text.trim(),
@@ -378,6 +412,35 @@ class AddTaskScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(14.r),
       ),
       child: child,
+    );
+  }
+
+  DateTime _dueDateTime() {
+    return DateTime(
+      selectedDate.value.year,
+      selectedDate.value.month,
+      selectedDate.value.day,
+      selectedTime.value.hour,
+      selectedTime.value.minute,
+    );
+  }
+
+  bool _isReminderAfterDueDate(DateTime reminder) {
+    return reminder.isAfter(_dueDateTime());
+  }
+
+  void _clearReminderIfInvalid() {
+    final reminder = reminderDateTime.value;
+    if (reminder == null || !_isReminderAfterDueDate(reminder)) {
+      return;
+    }
+
+    reminderEnabled.value = false;
+    reminderDateTime.value = null;
+    Get.snackbar(
+      "Reminder cleared",
+      "Reminder was removed because it was after the due date and time",
+      snackPosition: SnackPosition.BOTTOM,
     );
   }
 
