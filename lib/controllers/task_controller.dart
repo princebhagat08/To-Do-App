@@ -54,6 +54,7 @@ class TaskController extends GetxController {
     }
     taskBox.add(task);
     loadTasks();
+    clearAddTaskDraft();
   }
 
   void _filterTasks() {

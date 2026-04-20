@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:todo/constants/txt_style.dart';
 
 import '../../controllers/task_controller.dart';
@@ -257,7 +258,7 @@ class AddTaskScreen extends StatelessWidget {
           title: const Text("Reminder"),
           subtitle: Text(
             reminderEnabled.value && reminderDateTime.value != null
-                ? reminderDateTime.value.toString()
+                ? DateFormat('dd-MM-yyyy hh:mm a').format(reminderDateTime.value!)
                 : "No reminder set",
           ),
           trailing: Switch(
@@ -302,6 +303,19 @@ class AddTaskScreen extends StatelessWidget {
                 time.minute,
               );
 
+              if (_isReminderBeforeNow(selectedReminder)) {
+                reminderEnabled.value = false;
+                reminderDateTime.value = null;
+                Get.snackbar(
+                  "Invalid reminder",
+                  "Reminder time cannot be before the current time",
+                  snackPosition: SnackPosition.BOTTOM,
+                  colorText: Colors.black,
+                  backgroundColor: Colors.white,
+                );
+                return;
+              }
+
               if (_isReminderAfterDueDate(selectedReminder)) {
                 reminderEnabled.value = false;
                 reminderDateTime.value = null;
@@ -310,7 +324,7 @@ class AddTaskScreen extends StatelessWidget {
                   "Reminder must be on or before the due date and time",
                   snackPosition: SnackPosition.BOTTOM,
                   colorText: Colors.black,
-                  backgroundColor: Colors.white
+                  backgroundColor: Colors.white,
                 );
                 return;
               }
@@ -368,13 +382,26 @@ class AddTaskScreen extends StatelessWidget {
 
     if (reminderEnabled.value &&
         reminderDateTime.value != null &&
+        _isReminderBeforeNow(reminderDateTime.value!)) {
+      Get.snackbar(
+        "Invalid reminder",
+        "Reminder time cannot be before the current time",
+        snackPosition: SnackPosition.BOTTOM,
+        colorText: Colors.black,
+        backgroundColor: Colors.white,
+      );
+      return;
+    }
+
+    if (reminderEnabled.value &&
+        reminderDateTime.value != null &&
         _isReminderAfterDueDate(reminderDateTime.value!)) {
       Get.snackbar(
         "Invalid reminder",
         "Reminder must be on or before the due date and time",
         snackPosition: SnackPosition.BOTTOM,
         colorText: Colors.black,
-        backgroundColor: Colors.white
+        backgroundColor: Colors.white,
       );
       return;
     }
@@ -388,20 +415,25 @@ class AddTaskScreen extends StatelessWidget {
       recurrence: selectedRecurrence.value,
     );
 
+    controller.addTask(task);
 
-
-    if (reminderEnabled.value && reminderDateTime.value != null) {
+    final taskId = task.key;
+    print("---> taskId $taskId");
+    if (reminderEnabled.value &&
+        reminderDateTime.value != null &&
+        taskId is int) {
       NotificationService.scheduleNotification(
-        id: task.key,
+        id: taskId,
         title: "Task Reminder",
         body: task.title,
         scheduledTime: reminderDateTime.value!,
       );
+      Get.back();
+    }else{
+      Get.back();
     }
 
-    controller.addTask(task);
-    controller.clearAddTaskDraft();
-    Get.back();
+
   }
 
   Widget _inputContainer(Widget child) {
@@ -429,9 +461,28 @@ class AddTaskScreen extends StatelessWidget {
     return reminder.isAfter(_dueDateTime());
   }
 
+  bool _isReminderBeforeNow(DateTime reminder) {
+    return reminder.isBefore(DateTime.now());
+  }
+
   void _clearReminderIfInvalid() {
     final reminder = reminderDateTime.value;
-    if (reminder == null || !_isReminderAfterDueDate(reminder)) {
+    if (reminder == null) {
+      return;
+    }
+
+    if (_isReminderBeforeNow(reminder)) {
+      reminderEnabled.value = false;
+      reminderDateTime.value = null;
+      Get.snackbar(
+        "Reminder cleared",
+        "Reminder was removed because it was before the current time",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    if (!_isReminderAfterDueDate(reminder)) {
       return;
     }
 
